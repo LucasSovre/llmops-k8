@@ -17,8 +17,8 @@ llm = Llama(
 
 def handle_message(message):
     """Handle messages received from the subscription."""
-    json_message = message['data'].decode('utf-8')
-    json_message = json.loads(json_message)
+    decoded_message = message[1].decode('utf-8')
+    json_message = json.loads(decoded_message)
     print("beging inference on ticket :", json_message.get("ticket_id"))
     start_ns = time.perf_counter_ns()
     inference = llm(json_message.get("prompt"),
@@ -31,17 +31,12 @@ def handle_message(message):
 
 # Connect to Redis
 redis_client = redis(host='localhost', port=6379, db=0)
-pubsub = redis_client.pubsub()
-
-# Subscribe to the input_channel
-pubsub.subscribe(**{'input_channel': handle_message})
-
-print("Subscribed to 'input_channel'. Waiting for messages...")
 
 while True:
     # Check for message
-    message = pubsub.get_message()
-    if message and message['type'] == 'message':
-        handle_message(message)
+    print("Waiting for message from input_queue...")
+    message = redis_client.blpop("input_queue", timeout=0)
+    print(f"Received message from input_queue:")
+    handle_message(message)
     # Sleep to avoid busy-waiting
     time.sleep(0.01)

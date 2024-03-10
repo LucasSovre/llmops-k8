@@ -11,12 +11,13 @@ def generate_random_string(length=10):
 
 def handle_message(message):
     """Handle messages received from the subscription."""
-    json_message = message['data'].decode('utf-8')
-    json_message = json.loads(json_message)
+    decoded_message = message[1].decode('utf-8')
+    json_message = json.loads(decoded_message)
     print("Received message:", json_message)
     # Wait for 2 seconds before publishing a new message
-    for i in range(3):
-        print(f"Waiting for 3 seconds... {i}")
+    time_to_wait = random.randint(1, 5)
+    for i in range(time_to_wait):
+        print(f"Waiting for {time_to_wait} seconds... {i}")
         time.sleep(1)
     # Generate a random string
     random_str = generate_random_string()
@@ -26,17 +27,12 @@ def handle_message(message):
 
 # Connect to Redis
 redis_client = redis(host='localhost', port=6379, db=0)
-pubsub = redis_client.pubsub()
-
-# Subscribe to the input_channel
-pubsub.subscribe(**{'input_channel': handle_message})
-
-print("Subscribed to 'input_channel'. Waiting for messages...")
 
 while True:
     # Check for message
-    message = pubsub.get_message()
-    if message and message['type'] == 'message':
-        handle_message(message)
+    print("Waiting for message from input_queue...")
+    message = redis_client.blpop("input_queue", timeout=0)
+    print(f"Received message from input_queue: {message}")
+    handle_message(message)
     # Sleep to avoid busy-waiting
     time.sleep(0.01)
