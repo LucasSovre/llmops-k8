@@ -2,3 +2,5 @@
 **/__pycache__
 **/.python-version
 **/*.gguf
+**/*.bkp
+**/*.DS_Store
