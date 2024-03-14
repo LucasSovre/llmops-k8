@@ -1,8 +1,9 @@
 import redis
+import os 
 
 # Initialize Redis client
 def get_redis_client():
-    return redis.Redis(host='localhost', port=6379, db=0)
+    return redis.Redis(host=os.getenv("REDIS_HOST",'localhost'), port=6379, db=0)
 
 # Dependency
 def get_redis_dependency():
