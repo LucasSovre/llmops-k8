@@ -38,7 +38,7 @@ async def prompt(input: PromptInput, redisConn:Redis = Depends(get_redis_depende
         "prompt": input.prompt
     })
     try:
-        redisConn.lpush("input_queue", message)
+        redisConn.lpush(f"input_queue_{input.model}", message)
     except Exception as e:
         error = str(e)
     return {

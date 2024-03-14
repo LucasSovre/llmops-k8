@@ -3,18 +3,14 @@ import time
 import json
 import os
 
-from llama_cpp import Llama
+from sentence_transformers import SentenceTransformer
 import signal
 
 # Load the Llama model
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
-MODEL_PATH = os.path.join(CURRENT_DIR, "llama-2-7b.Q4_0.gguf")
+MODEL_PATH = os.path.join(CURRENT_DIR, "e5-large-v2")
 
-llm = Llama(
-    model_path=MODEL_PATH,
-    chat_format="llama-2",
-    verbose=False
-)
+model = SentenceTransformer(MODEL_PATH)
 
 def handle_message(message):
     """Handle messages received from the subscription."""
@@ -22,13 +18,11 @@ def handle_message(message):
     json_message = json.loads(decoded_message)
     print("begining inference on ticket :", json_message.get("ticket_id"))
     start_ns = time.perf_counter_ns()
-    inference = llm(json_message.get("prompt"),
-                    max_tokens=int(json_message.get("max_tokens",500)),
-                    stop=["Q:", "\n"]
-                    )
+    embeddings = model.encode(json.loads(json_message.get("prompt")), normalize_embeddings=True)
+    scores = (embeddings[:2] @ embeddings[2:].T) * 100
     end_ns = time.perf_counter_ns()
     print(f"Time taken: {end_ns - start_ns} ns")
-    redis_client.publish(json_message.get("ticket_id"), inference["choices"][0]["text"])
+    redis_client.publish(json_message.get("ticket_id"), json.dumps(scores.tolist()))
 
 # Connect to Redis
 redis_client = redis(host='localhost', port=6379, db=0)
@@ -50,7 +44,7 @@ print("Waiting for message from input_queue...")
 
 while running:
     # Check for message
-    message = redis_client.blpop(f"input_queue_{os.getenv('MODEL_NAME','llm_llama')}", timeout=10)
+    message = redis_client.blpop(f"input_queue_{os.getenv('MODEL_NAME','embeding_e5')}", timeout=10)
     if message is not None:
         handle_message(message)
     # Sleep to avoid busy-waiting
