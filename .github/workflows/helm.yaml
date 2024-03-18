@@ -36,5 +36,6 @@ jobs:
 
           - name: 'Send helm chart to GitHub Container Registry'
             run: |
+              helm dependency update my-chart
               export LOCATION=$(helm package my-chart | awk '{print $NF}')
               helm push $LOCATION oci://ghcr.io/lucassovre
