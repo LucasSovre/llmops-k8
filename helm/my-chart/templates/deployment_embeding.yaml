@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: embeding-worker
-        image: localhost:5000/dgfip-embeding
+        image: ghcr.io/lucassovre/llmops-embedding:latest
         env:
         - name: REDIS_HOST
           value: redis
