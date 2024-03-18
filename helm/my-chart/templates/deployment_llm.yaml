@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: llm-worker
-        image: localhost:5000/dgfip-llm
+        image: ghcr.io/lucassovre/llmops-llm:latest
         env:
         - name: REDIS_HOST
           value: redis

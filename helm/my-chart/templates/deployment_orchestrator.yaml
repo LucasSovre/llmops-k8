@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: orchestrator
-        image: localhost:5000/dgfip-orchestrator
+        image: ghcr.io/lucassovre/llmops-orchestrator:latest
         ports:
           - containerPort: 8080
         env:

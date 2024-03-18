@@ -1,6 +1,8 @@
 FROM python:3.10-bullseye 
 #LTS version of python
 
+LABEL org.opencontainers.image.source="https://github.com/LucasSovre/llmops-k8"
+
 # Set the working directory in the container
 WORKDIR /code
 
