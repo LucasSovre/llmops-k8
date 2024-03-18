@@ -23,5 +23,5 @@ jobs:
 
           - name: 'Build orchestrator Image'
             run: |
-              docker build . --tag ghcr.io/LucasSovre/llmops-orchestrator:latest
-              docker push ghcr.io/LucasSovre/llmops-orchestrator:latest
+              docker build . --tag ghcr.io/lucassovre/llmops-orchestrator:latest
+              docker push ghcr.io/lucassovre/llmops-orchestrator:latest
