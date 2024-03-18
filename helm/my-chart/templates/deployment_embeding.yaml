@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: embeding-worker
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: embeding-worker
+  template:
+    metadata:
+      labels:
+        app: embeding-worker
+    spec:
+      containers:
+      - name: embeding-worker
+        image: localhost:5000/dgfip-embeding
+        env:
+        - name: REDIS_HOST
+          value: redis

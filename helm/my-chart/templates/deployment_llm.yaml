@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: llm-worker
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: llm-worker
+  template:
+    metadata:
+      labels:
+        app: llm-worker
+    spec:
+      containers:
+      - name: llm-worker
+        image: localhost:5000/dgfip-llm
+        env:
+        - name: REDIS_HOST
+          value: redis

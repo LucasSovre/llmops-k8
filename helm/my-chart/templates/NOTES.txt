@@ -1,0 +1,6 @@
+This Helm chart as been created by Lucas SOVRE for a job interview.
+
+Your service should be online at http://{{ .Values.ingress.host }} if the DNS is correctly configured.
+You can test it with the notebook at https://github.com/LucasSovre/llmops-k8/blob/main/demo.ipynb
+
+If you have any question, feel free to ask me at lucas.sovre@proton.me
