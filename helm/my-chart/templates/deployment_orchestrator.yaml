@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: orchestrator
-        image: ghcr.io/lucassovre/llmops-orchestrator:latest
+        image: {{ .Values.repository.url }}/llmops-orchestrator:latest
         ports:
           - containerPort: 8080
         env:

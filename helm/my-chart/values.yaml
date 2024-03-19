@@ -1,2 +1,4 @@
+repository:
+  url: ghcr.io/lucassovre
 ingress:
   host: dgfip.k8s.orb.local

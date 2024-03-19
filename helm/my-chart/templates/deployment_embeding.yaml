@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: embeding-worker
-        image: ghcr.io/lucassovre/llmops-embedding:latest
+        image: {{ .Values.repository.url }}/llmops-embedding:latest
         env:
         - name: REDIS_HOST
           value: redis
