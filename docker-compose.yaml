@@ -6,6 +6,9 @@ services:
       - "8080:8080"
     environment:
       - REDIS_HOST=redis
+      - MONGO_HOST=mongo
+      - MONGO_USER=admin
+      - MONGO_PASSWORD=admin
   llm:
     build: ./llm
     environment:
@@ -14,6 +17,12 @@ services:
     build: ./embeding
     environment:
           - REDIS_HOST=redis
-
   redis:
     image: "redis:alpine"
+  mongo:
+    image: "mongo:latest"
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: admin

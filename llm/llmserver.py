@@ -40,7 +40,10 @@ def handle_message(message):
                     )
     end_ns = time.perf_counter_ns()
     logging.info("Inference on ticket %s took %s s", json_message.get("ticket_id"), (end_ns - start_ns) / 1e9)
-    redis_client.publish(json_message.get("ticket_id"), inference["choices"][0]["text"])
+    redis_client.publish(json_message.get("ticket_id"), json.dumps({
+        "result" : inference["choices"][0]["text"],
+        "process_time": (end_ns - start_ns) / 1e9
+        }))
 
 # Connect to Redis
 redis_client = redis(host=os.getenv("REDIS_HOST",'localhost'), port=6379, db=0)
