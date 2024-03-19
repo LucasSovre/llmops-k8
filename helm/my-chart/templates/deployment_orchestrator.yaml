@@ -20,6 +20,14 @@ spec:
         env:
           - name: REDIS_HOST
             value: redis
+          - name: MONGO_HOST
+            value: mongo
+          - name: MONGO_PORT
+            value: "27017"
+          - name: MONGO_USER
+            value: admin
+          - name: MONGO_PASSWORD
+            value: admin
         readinessProbe:
           httpGet:
             path: /utils/
