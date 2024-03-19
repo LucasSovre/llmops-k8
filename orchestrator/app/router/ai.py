@@ -92,3 +92,20 @@ async def stream(channel:str,request: Request,redisConn:Redis = Depends(get_redi
             
             await asyncio.sleep(STREAM_DELAY)
     return EventSourceResponse(event_generator())
+
+@router.get("/metrics/process_time")
+async def ticket(mongoConn = Depends(get_mongo_dependency)):
+    cursor = mongoConn.db.ticket.aggregate(
+        [
+            {
+                "$group": {
+                    "_id": "$model",
+                    "averageProcessTime": {
+                        "$avg": "$process_time"
+                    }
+                }
+            }
+        ]
+    )
+    result = list(cursor)
+    return {"result": result}
