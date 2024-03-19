@@ -9,7 +9,8 @@ Auteur : Lucas SOVRE
     1. [Docker compose](#docker-compose)
     2. [Minikube](#minikube)
 3. [Plus de détails](#plus-de-détails)
-4. [Pistes d'amélioration](#amelioration)
+4. [La CI/CD](#la-cicd)
+5. [Pistes d'amélioration](#amelioration)
 
 ## Description de la stack :
 
@@ -61,6 +62,92 @@ Vous avez également un notebook python à disposition sous `demo.ipynb`.
 
 ### Minikube
 
+Une fois le cluster minikube créé (voir https://kubernetes.io/fr/docs/tasks/tools/install-minikube/)
+
+vous devrez installer helm (un package manager pour kubernetes https://helm.sh/docs/intro/install/)
+
+Deux possibilités :
+
+#### Vous souhaitez build les images docker par vous même ?
+
+Lancer les commandes suivantes :
+
+```shell
+bash build_everything.sh 
+```
+
+```shell
+docker ps
+```
+
+Vous devriez constater un container registry en fonctionnement.
+
+Il vous suffit ensuite de vous rendre dans ./helm , puis de lancer :
+
+```shell
+helm install my-chart my-chart --values ./example_val.yaml
+```
+
+Après quelques instants, vous devriez constater tous vos pods en ligne :
+
+```shell
+kubectl get pods
+```
+ Vous n'avez plus qu'à récupérer le port du nodeport pour essayer en localhost :
+
+```shell
+kubectl get svc
+```
+
+Exemple :
+
+```
+❯ kubectl get svc
+NAME                            TYPE        CLUSTER-IP        EXTERNAL-IP   PORT(S)          AGE
+kubernetes                      ClusterIP   192.168.194.129   <none>        443/TCP          78m
+mongo                           ClusterIP   192.168.194.221   <none>        27017/TCP        17s
+orchestrator                    ClusterIP   192.168.194.250   <none>        8080/TCP         17s
+redis                           ClusterIP   192.168.194.230   <none>        6379/TCP         17s
+orchestrator-nodeport-service   NodePort    192.168.194.169   <none>        8080:31033/TCP   17s
+```
+
+Dans cet exemple, nos services sont disponibles sous http://localhost:31033/docs
+
+
+#### Vous souhaitez utiliser les images issues de la CI/CD github ?
+
+> ATTENTION ces images sont compilées pour processeurs x86
+
+Il vous suffit de vous rendre dans ./helm et de lancer :
+
+```shell
+helm install my-chart my-chart
+```
+
+Après quelques instants, vous devriez constater tous vos pods en ligne :
+
+```shell
+kubectl get pods
+```
+ Vous n'avez plus qu'à récupérer le port du nodeport pour essayer en localhost :
+
+```shell
+kubectl get svc
+```
+
+Exemple :
+
+```
+❯ kubectl get svc
+NAME                            TYPE        CLUSTER-IP        EXTERNAL-IP   PORT(S)          AGE
+kubernetes                      ClusterIP   192.168.194.129   <none>        443/TCP          78m
+mongo                           ClusterIP   192.168.194.221   <none>        27017/TCP        17s
+orchestrator                    ClusterIP   192.168.194.250   <none>        8080/TCP         17s
+redis                           ClusterIP   192.168.194.230   <none>        6379/TCP         17s
+orchestrator-nodeport-service   NodePort    192.168.194.169   <none>        8080:31033/TCP   17s
+```
+
+Dans cet exemple, nos services sont disponibles sous http://localhost:31033/docs
 
 
 ## Plus de détails
@@ -71,4 +158,16 @@ Pour en savoir plus, rendez vous sur les README des dossiers associés :
 - [Embbeding worker](./embeding/README.md)
 - [Orchestrateur](./orchestrator/README.md)
 
+## La CI/CD
+
+Une CI/CD est en place, et permet de recréer les images docker à chaque fois qu'un commit modifie son répertoire.
+
+Ces images sont disponibles à : https://github.com/LucasSovre?tab=packages&repo_name=llmops-k8
+
 ## Amélioration
+
+Pour avoir des images plus génériques, on pourrait étudier la capacité à monter lesmodèless via des volumes et ne pas avoir à créer une image docker par modèle d'IA.
+
+On pourrait aussi monitorer les utilisations CPU/RAM avec une solution type prometheus.
+
+On pourrait passer d'une exposition nodePort à un ingress plus sécurisé, mais dans le cas d'un exemple simple comme ici, cela serait plus contraignant qu'utile.
