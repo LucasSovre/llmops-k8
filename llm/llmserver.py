@@ -35,12 +35,16 @@ def handle_message(message):
     logging.info("Starting inference on ticket: %s", json_message.get("ticket_id"))
     start_ns = time.perf_counter_ns()
     inference = llm(json_message.get("prompt"),
-                    max_tokens=int(json_message.get("max_tokens",500)),
+                    max_tokens=int(json_message.get("params", {}).get("max_tokens", 100)),
+                    temperature=float(json_message.get("params", {}).get("temperature", 0.5)),
                     stop=["Q:", "\n"]
                     )
     end_ns = time.perf_counter_ns()
     logging.info("Inference on ticket %s took %s s", json_message.get("ticket_id"), (end_ns - start_ns) / 1e9)
-    redis_client.publish(json_message.get("ticket_id"), inference["choices"][0]["text"])
+    redis_client.publish(json_message.get("ticket_id"), json.dumps({
+        "result" : inference["choices"][0]["text"],
+        "process_time": (end_ns - start_ns) / 1e9
+        }))
 
 # Connect to Redis
 redis_client = redis(host=os.getenv("REDIS_HOST",'localhost'), port=6379, db=0)

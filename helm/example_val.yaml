@@ -1,2 +1,4 @@
+repository:
+  url: localhost:5000
 ingress:
   host: dgfip.k8s.orb.local

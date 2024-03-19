@@ -4,3 +4,5 @@
 **/*.gguf
 **/*.bkp
 **/*.DS_Store
+**/*.idea
+**/*.vscode

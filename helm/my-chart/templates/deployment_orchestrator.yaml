@@ -14,12 +14,20 @@ spec:
     spec:
       containers:
       - name: orchestrator
-        image: ghcr.io/lucassovre/llmops-orchestrator:latest
+        image: {{ .Values.repository.url }}/llmops-orchestrator:latest
         ports:
           - containerPort: 8080
         env:
           - name: REDIS_HOST
             value: redis
+          - name: MONGO_HOST
+            value: mongo
+          - name: MONGO_PORT
+            value: "27017"
+          - name: MONGO_USER
+            value: admin
+          - name: MONGO_PASSWORD
+            value: admin
         readinessProbe:
           httpGet:
             path: /utils/
