@@ -9,6 +9,10 @@ Auteur : Lucas SOVRE
 - Accès à une instance Redis
 - Accès à une base mongo
 
+## Documentation
+
+Une documentation au format Open-API est automatiquement disponible sous le chemin `/docs` une fois le serveur lancé.
+
 ## Installation
 
 1. Clonez le dépôt Git :
